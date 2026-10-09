@@ -25,7 +25,7 @@ public:
     bool getAvailability() const;
     string getBorrowerId() const;
 
-    // Setters
+    // Setters4
     void setTitle(const string& title);
     void setAuthor(const string& author);
     void setISBN(const string& isbn);
