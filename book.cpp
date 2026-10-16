@@ -1,6 +1,6 @@
 #include "book.h"
 
-using namespace std;
+#include <iostream>
 
 // premier constructeur
 Book::Book() {
@@ -58,3 +58,49 @@ void Book::setBorrowerId(const string& borrowerId) {
     this->borrowerId = borrowerId;
 }
 
+// Methods
+
+void Book::checkOut(const string& borrowerId) {
+    if (this->borrowerId.empty()) {
+        this->borrowerId = borrowerId;
+    } else {
+        std::cout << "Le livre est déja emprunté" << std::endl;
+    }
+}
+
+void Book::returnBook() {
+    this->borrowerId = "";
+}
+
+string Book::toString() const {
+    return this->title;
+};
+
+string Book::toFileFormat() const {
+    string isAvailable = "0";
+    string user = "";
+
+    if (this->isAvailable) {
+        isAvailable = "1";
+    }
+
+    if (this->borrowerId.empty()) {
+        user = "|" + this->borrowerId;
+    }
+
+    return this->title + "|" + this->author  + "|" + this->isbn + "|" + isAvailable + user;
+};
+
+void Book::fromFileFormat(const string& line) {
+    std::string delimiter = "|";
+    int pos = 0;
+    std::string title = line.substr(pos, line.find(delimiter));
+    pos = line.find(delimiter);
+    std::string author = line.substr(pos, line.find(delimiter)); 
+    pos = line.find(delimiter, pos); //commence a partir de la derniere position
+    std::string isbn = line.substr(0, line.find(delimiter)); 
+    pos = line.find(delimiter, pos); //commence a partir de la derniere position
+    std::string availability = line.substr(0, line.find(delimiter)); 
+    pos = line.find(delimiter, pos); //commence a partir de la derniere position
+    std::string userId = line.substr(0, line.find(delimiter)); 
+}
