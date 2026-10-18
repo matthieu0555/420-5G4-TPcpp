@@ -1,4 +1,5 @@
 #include "book.h"
+#include "library.h"
 
 #include <iostream>
 
@@ -35,7 +36,7 @@ bool Book::getAvailability() const {
 string Book::getBorrowerId() const {
     return Book::borrowerId;
 }
-
+  
 // setters
 
 void Book::setTitle(const string& title) {
@@ -61,15 +62,19 @@ void Book::setBorrowerId(const string& borrowerId) {
 // Methods
 
 void Book::checkOut(const string& borrowerId) {
-    if (this->borrowerId.empty()) {
-        this->borrowerId = borrowerId;
-    } else {
+    if (this->isAvailable == false) {
+        cout << "Le livre n'est pas disponible" << endl;
+    } else if (!this->borrowerId.empty()) {
         std::cout << "Le livre est déja emprunté" << std::endl;
+    } else {
+        this->borrowerId = borrowerId;
+        this->isAvailable = false;
     }
 }
 
 void Book::returnBook() {
     this->borrowerId = "";
+    this->isAvailable = true;
 }
 
 string Book::toString() const {
@@ -84,7 +89,7 @@ string Book::toFileFormat() const {
         isAvailable = "1";
     }
 
-    if (this->borrowerId.empty()) {
+    if (!this->borrowerId.empty()) {
         user = "|" + this->borrowerId;
     }
 
@@ -93,14 +98,39 @@ string Book::toFileFormat() const {
 
 void Book::fromFileFormat(const string& line) {
     std::string delimiter = "|";
-    int pos = 0;
-    std::string title = line.substr(pos, line.find(delimiter));
-    pos = line.find(delimiter);
-    std::string author = line.substr(pos, line.find(delimiter)); 
-    pos = line.find(delimiter, pos); //commence a partir de la derniere position
-    std::string isbn = line.substr(0, line.find(delimiter)); 
-    pos = line.find(delimiter, pos); //commence a partir de la derniere position
-    std::string availability = line.substr(0, line.find(delimiter)); 
-    pos = line.find(delimiter, pos); //commence a partir de la derniere position
-    std::string userId = line.substr(0, line.find(delimiter)); 
+
+    int debutPosition = 0;
+    int finPosition = line.find('|');
+    std::string title = line.substr(debutPosition, finPosition - debutPosition); //2e argument = longeur plutot que position de fin
+
+    debutPosition = finPosition + 1; //position apres le "|" trouvé
+    finPosition = line.find(delimiter, debutPosition);
+    std::string author = line.substr(debutPosition, finPosition - debutPosition);
+    
+    debutPosition = finPosition + 1; //position apres le "|" trouvé
+    finPosition = line.find(delimiter, debutPosition);
+    std::string isbn = line.substr(debutPosition, finPosition - debutPosition);
+
+    debutPosition = finPosition + 1; //position apres le "|" trouvé
+    finPosition = line.find(delimiter, debutPosition);
+    std::string availability;
+
+    if (finPosition == -1) {
+        availability = line.substr(debutPosition);   // jusqu'à la fin
+    } else {
+        availability = line.substr(debutPosition, finPosition - debutPosition);
+    }
+
+    std::string userId = "";
+
+    // -1 = pas d'emprunteur assigné
+    if (finPosition != -1) {
+        userId = line.substr(finPosition + 1);
+    }
+
+    setTitle(title);
+    setAuthor(author);
+    setISBN(isbn);
+    setAvailability(availability == "1");
+    setBorrowerId(userId);
 }
