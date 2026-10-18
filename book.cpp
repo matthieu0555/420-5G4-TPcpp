@@ -82,17 +82,12 @@ string Book::toString() const {
 
 string Book::toFileFormat() const {
     string isAvailable = "0";
-    string user = "";
 
     if (this->isAvailable) {
         isAvailable = "1";
     }
 
-    if (!this->borrowerId.empty()) {
-        user = "|" + this->borrowerId;
-    }
-
-    return this->title + "|" + this->author  + "|" + this->isbn + "|" + isAvailable + user;
+    return this->title + "|" + this->author  + "|" + this->isbn + "|" + isAvailable + "|" + this->borrowerId;
 };
 
 void Book::fromFileFormat(const string& line) {
