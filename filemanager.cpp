@@ -124,12 +124,37 @@ bool FileManager::loadUsersFromFile(Library &library)
     return true;
 }
 
+void FileManager::logActivity(const string& action, const string& details) {
+    if (booksFileName.empty() || usersFileName.empty()) {
+        //cout << "Erreur : Écriture du journal impossible, car les fichier book.txt et users.txt sont vide\n";
+        //  J'ai fais expres de laisser la fonction sans truc car le message était répétitif.
+        return;   //pas de -d, donc pas de journal
+    }
+
+    filesystem::path chemin = filesystem::path(booksFileName).parent_path() / "journal.log";
+    ofstream file(chemin, ios::app);
+
+     if (!file.is_open()) { // Es que le fichier est ouvert?
+        cout << "Erreur : Impossible d'ouvrir le journal " << chemin << ".\n";
+        return;
+    }
+
+    
+    time_t maintenant = time(nullptr);
+    char horodatage[20];
+    strftime(horodatage, sizeof(horodatage), "%Y-%m-%d %H:%M:%S", localtime(&maintenant));
+
+    file << horodatage << " - [" << action << "] " << details << "\n";
+}
+
+
 // Check if file exists
 bool FileManager::fileExists(const string &filename)
 {
     ifstream file(filename);
     return file.good();
 }
+
 
 // Create backup
 void FileManager::createBackup()
