@@ -1,5 +1,4 @@
 #include "book.h"
-#include "library.h"
 
 #include <iostream>
 

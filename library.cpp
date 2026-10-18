@@ -96,6 +96,35 @@ void Library::addUser(const User& user) {
     users.push_back(make_unique<User>(user));
 }
 
+string Library::generateUserId() {
+    int maxId = 0;
+    string UserId = "USR";
+
+    for (auto& user : users) {
+        string id = user->getUserId();
+        if (id.size() > 3 && id.substr(0, 3) == "USR") { //es que le id a plus que 3 caractere + verifie que les premiers 3 character sont USR
+            string nombre = id.substr(3);
+            
+            int n = stoi(nombre);
+            if (maxId < n) {
+                maxId = n;
+            }
+        } 
+    }
+
+    maxId++;
+
+    if (maxId < 10) {
+        UserId.append("00" + to_string(maxId));
+    } else if (maxId < 100) {
+        UserId.append("0" + to_string(maxId));
+    } else {
+        UserId.append(to_string(maxId));
+    }
+
+    return UserId;
+}
+
 // Find user by ID
 User* Library::findUserById(const string& userId) {
     auto it = find_if(users.begin(), users.end(),
