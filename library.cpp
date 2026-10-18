@@ -213,16 +213,7 @@ bool Library::returnBook(const string &isbn)
     return false;
 }
 
-// Display all books
-void Library::displayAllBooks()
-{
-    if (books.empty())
-    {
-        cout << "Aucun livre dans la bibliothèque.\n";
-        return;
-    }
-
-    vector<Book *> livres = Library::getAllBooks();
+int demanderChoixTri() {
     int choix = -1;
 
     while (choix != 1 && choix != 2) {
@@ -237,6 +228,10 @@ void Library::displayAllBooks()
           }
     }
 
+    return choix;
+}
+
+void trierLivres(vector<Book*>& livres, int choix) {
     if (choix == 1)
     {
             sort(livres.begin(), livres.end(), [](Book *a, Book *b)
@@ -250,6 +245,20 @@ void Library::displayAllBooks()
          return a->getTitle() < b->getTitle(); //Si les auteurs ont le meme nom, jvais trier par titre
             });
     }
+}
+
+// Display all books
+void Library::displayAllBooks()
+{
+    if (books.empty())
+    {
+        cout << "Aucun livre dans la bibliothèque.\n";
+        return;
+    }
+
+    vector<Book *> livres = Library::getAllBooks();
+    int choix = demanderChoixTri();
+    trierLivres(livres, choix);
 
     cout << "\n=== TOUS LES LIVRES TRIÉ PAR " << (choix == 1 ? "TITRE" : "AUTEUR") << " ===\n";
     for (size_t i = 0; i < livres.size(); ++i)
@@ -270,6 +279,9 @@ void Library::displayAvailableBooks()
         cout << "Aucun livre disponible pour emprunt.\n";
         return;
     }
+
+    int choix = demanderChoixTri();
+    trierLivres(available, choix);
 
     cout << "\n=== LIVRES DISPONIBLES ===\n";
     for (size_t i = 0; i < available.size(); ++i)
