@@ -11,7 +11,7 @@ private:
     string title;
     string author;
     string isbn;
-    bool isAvailable;
+    bool isAvailable = true;
     string borrowerId;
 
 public:
