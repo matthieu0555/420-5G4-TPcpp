@@ -113,17 +113,26 @@ int main(int argc, char* argv[]) {
                 } else {
                     Book newBook(title, author, isbn);
                     library.addBook(newBook);
+                    fileManager.logActivity("AJOUT LIVRE", newBook.toFileFormat()); //log ajout livre
                     cout << "Livre ajouté avec succès !\n";
                 }
                 pauseForInput();
+
                 break;
             }
             
             case 2: { // Remove Book
                 string isbn = getInput("Entrez l'ISBN du livre à supprimer : ");
+
+                Book* livre = library.findBookByISBN(isbn);
+                string infos = "";
+                if (livre != nullptr) {
+                    infos = livre->toFileFormat();
+                }
                 
                 if (library.removeBook(isbn)) {
                     cout << "Livre supprimé avec succès !\n";
+                    fileManager.logActivity("SUPPRIMER LIVRE", infos); //log enlever livre
                 } else {
                     cout << "Livre non trouvé.\n";
                 }
@@ -164,6 +173,7 @@ int main(int argc, char* argv[]) {
                     }
                 }
                 pauseForInput();
+                
                 break;
             }
             
@@ -186,6 +196,7 @@ int main(int argc, char* argv[]) {
                 } else {
                     User newUser(name, userId);
                     library.addUser(newUser);
+                    fileManager.logActivity("AJOUT UTILISATEUR", userId + "|" + name); //pour l'ajout d'un nouvel utilisateur
                     cout << "Utilisateur ajouté avec succès !\n";
                 }
                 pauseForInput();
@@ -200,9 +211,14 @@ int main(int argc, char* argv[]) {
             case 9: { // Check Out Book
                 string isbn = getInput("Entrez l'ISBN du livre à emprunter : ");
                 string userId = getInput("Entrez l'ID de l'utilisateur : ");
+
+                Book* livre = library.findBookByISBN(isbn);
                 
                 if (library.checkOutBook(isbn, userId)) {
                     cout << "Livre emprunté avec succès !\n";
+                    User* user = library.findUserById(userId); //jvoulais faire log le nom plutot que le UserId (USR000), donc j'ai utiliser lobjet user plutot que toFileFormat()
+                    
+                    fileManager.logActivity("EMPRUNT", livre->getTitle() + "|" + livre->getAuthor() + "|" + livre->getISBN() + "|0|" + user->getName());
                 } else {
                     cout << "Erreur : Impossible d'emprunter le livre. Vérifiez l'ISBN, l'ID utilisateur et la disponibilité du livre.\n";
                 }
@@ -212,9 +228,16 @@ int main(int argc, char* argv[]) {
             
             case 10: { // Return Book
                 string isbn = getInput("Entrez l'ISBN du livre à retourner : ");
+                Book* livre = library.findBookByISBN(isbn);
+                string infos = "";
+
+                if (livre != nullptr) {
+                    infos = livre->toFileFormat();
+                }
                 
                 if (library.returnBook(isbn)) {
                     cout << "Livre retourné avec succès !\n";
+                    fileManager.logActivity("RETOUR LIVRE", infos); //pour le retour d'un livre
                 } else {
                     cout << "Erreur : Impossible de retourner le livre. Vérifiez l'ISBN et que le livre est bien emprunté.\n";
                 }
