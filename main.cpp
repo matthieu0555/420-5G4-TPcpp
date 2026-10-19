@@ -197,7 +197,7 @@ int main(int argc, char* argv[]) {
                     User newUser(name, userId);
                     library.addUser(newUser);
                     fileManager.logActivity("AJOUT UTILISATEUR", userId + "|" + name); //pour l'ajout d'un nouvel utilisateur
-                    cout << "Utilisateur ajouté avec succès !\n";
+                    cout << "Utilisateur ajouté avec succès ! Son id est: " << userId << endl;
                 }
                 pauseForInput();
                 break;
